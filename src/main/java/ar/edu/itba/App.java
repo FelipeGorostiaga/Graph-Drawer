@@ -36,10 +36,10 @@ public class App {
 //        }
 
 //        Obstacle obstacle = new Obstacle();
-//        Wall wall1 = new Wall(0,2,4,4);
-//        Wall wall2 = new Wall(4,4,6,2);
-//        Wall wall3 = new Wall(6,2,4,0);
-//        Wall wall4 = new Wall(4,0,0,2);
+//        Wall wall1 = new Wall(0,5,4,7);
+//        Wall wall2 = new Wall(4,7,6,5);
+//        Wall wall3 = new Wall(6,5,4,3);
+//        Wall wall4 = new Wall(4,3,0,5);
 //
 //        obstacle.addSegment(wall1);
 //        obstacle.addSegment(wall2);
@@ -53,9 +53,22 @@ public class App {
 //
 //        grid.removePointsInside(obstacles);
 //
+//        Graph graph = new Graph();
+//
+//        graph.gridToGraph(grid, cell_size, obstacles);
+//
+//        System.out.println(graph.getNodes().size());
+//
 //        for (Vector<Double> point : grid.getPoints()){
 //            System.out.println(point);
 //        }
+//
+//        System.out.println("\n");
+//
+//        for(Node node: graph.getNodes()){
+//            node.printNode();
+//        }
+//
 
     }
 
