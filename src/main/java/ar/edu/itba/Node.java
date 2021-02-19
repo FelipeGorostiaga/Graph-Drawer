@@ -5,6 +5,7 @@ import java.util.*;
 public class Node {
     private Vector<Double> position;
     private Set<Node> neighbours;
+    private int id;
 
     public Node(Vector<Double> position){
         this.position = position;
@@ -13,6 +14,10 @@ public class Node {
 
     public void addNeighbour(Node neighbour){
         neighbours.add(neighbour);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Vector<Double> getPosition() {
@@ -24,12 +29,17 @@ public class Node {
     }
 
     public void printNode(){
-        System.out.print(position + " : ");
+        System.out.print(id);
         for (Node node: neighbours) {
-            System.out.print(node.position + ", ");
+            System.out.print(" " + node.getId());
         }
         System.out.print("\n");
     }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
 
     @Override
     public boolean equals(Object o) {

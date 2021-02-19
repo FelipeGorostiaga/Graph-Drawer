@@ -20,25 +20,21 @@ public class Obstacle {
        if it is part it is added and returns true,
        else returns false
     * */
-    public boolean addCorner(Wall s1) {
+    public boolean isPart(Wall s1) {
         Vector<Double> p1 = s1.getP1();
         Vector<Double> p2 = s1.getP2();
 
         for (Wall segment : segments) {
             if (segment.getP1().get(0).equals(p1.get(0)) && segment.getP1().get(1).equals(p1.get(1))) {
-                addSegment(s1);
                 return true;
             }
             if (segment.getP1().get(0).equals(p2.get(0)) && segment.getP1().get(1).equals(p2.get(1))) {
-                addSegment(s1);
                 return true;
             }
             if (segment.getP2().get(0).equals(p1.get(0)) && segment.getP2().get(1).equals(p1.get(1))) {
-                addSegment(s1);
                 return true;
             }
             if (segment.getP2().get(0).equals(p2.get(0)) && segment.getP2().get(1).equals(p2.get(1))) {
-                addSegment(s1);
                 return true;
             }
 
@@ -92,5 +88,56 @@ public class Obstacle {
 
         corners = corners/2;
         return count - corners;
+    }
+
+    public static List<Obstacle> defineObstacles(List<Wall> segments) {
+        List<Obstacle> obstacles = new LinkedList<>();
+        List<Obstacle> aux = new LinkedList<>();
+        for (Wall segment : segments) {
+            if(segment.getType() != 0){
+                for (int j = 0; j < obstacles.size(); j++) {
+                    Obstacle obstacle = obstacles.get(j);
+                    if(obstacle.isPart(segment))
+                        aux.add(obstacle);
+
+                }
+
+                if (aux.size() == 0) {
+                    Obstacle obstacle = new Obstacle();
+                    obstacle.addSegment(segment);
+                    obstacles.add(obstacle);
+                } else {
+                    aux.get(0).addSegment(segment);
+                    if(aux.size() > 1){
+                        obstacles.removeAll(aux);
+                        obstacles.add(Obstacle.unify(aux));
+                    }
+
+                }
+            }else {
+                Obstacle obstacle = new Obstacle();
+                obstacle.addSegment(segment);
+                obstacles.add(obstacle);
+            }
+
+            aux.clear();
+
+
+        }
+
+        return obstacles;
+    }
+
+    public static Obstacle unify(List<Obstacle> obstacles){
+        Obstacle obstacle = new Obstacle();
+
+        for(Obstacle obs : obstacles){
+            for (Wall segment: obs.getSegments()){
+                obstacle.addSegment(segment);
+            }
+
+        }
+
+        return obstacle;
     }
 }

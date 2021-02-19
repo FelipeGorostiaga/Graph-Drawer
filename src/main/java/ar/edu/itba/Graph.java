@@ -11,7 +11,7 @@ public class Graph {
         nodes = new LinkedList<>();
     }
 
-    public void gridToGraph(Grid grid, int size, List<Obstacle> obstacles){
+    public void gridToGraph(Grid grid, double size, List<Obstacle> obstacles){
         List<Vector<Double>> points = grid.getPoints();
 
         for(Vector<Double> point: points){
@@ -41,6 +41,14 @@ public class Graph {
         }
 
 
+    }
+
+    public void addIdToNodes(){
+        int i = 0;
+        for(Node node: nodes){
+            node.setId(i);
+            i++;
+        }
     }
 
     public List<Node> getNodes() {

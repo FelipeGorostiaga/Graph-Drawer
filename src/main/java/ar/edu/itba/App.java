@@ -8,32 +8,50 @@ public class App {
     public static void main(String[] args) {
 
         final Vector<Double> dimensions = new Vector<>(2);
-        List<Wall> segments = new ArrayList<>();
-        final int cell_size = 2;
+        List<Wall> segments;
+        List<Obstacle> obstacles;
 
-//        File file = new File("");
-//        Scanner sc = null;
-//
-//        try {
-//            sc = new Scanner(file).useLocale(Locale.US);
-//        } catch (FileNotFoundException e) {
-//            System.out.println("Failed to read files...");
-//            System.exit(1);
-//        }
-//
-//        //Dimensions
-//        dimensions.add(sc.nextDouble());
-//        dimensions.add(sc.nextDouble());
-//
-//        // Segments:
-//        // 0 - wall type
-//        // 1 - shelf
-//        // 2 - counter
-//        while (sc.hasNextLine()){
-//            int type = sc.nextInt();
-//            Wall wall = new Wall(sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), type);
-//            segments.add(wall);
-//        }
+
+
+
+        if(args.length < 2){
+            System.exit(1);
+        }
+
+        System.out.println(args[0]);
+        final double cell_size = Double.parseDouble(args[0]);
+
+        String  inFile = args[1];
+        String outFile;
+        if(args.length == 4){
+            outFile = args[2];
+        }else {
+            outFile = "";
+        }
+
+        System.out.println(inFile);
+        System.out.println(outFile);
+
+        segments = FileManager.readFile(inFile, dimensions);
+
+        obstacles = Obstacle.defineObstacles(segments);
+
+        Grid grid = new Grid(dimensions.get(1), dimensions.get(0), cell_size);
+
+        grid.removePointsInside(obstacles);
+
+        Graph graph = new Graph();
+
+        graph.gridToGraph(grid, cell_size, obstacles);
+
+        graph.addIdToNodes();
+
+        FileManager.printGraph(graph, outFile);
+
+
+
+
+
 
 //        Obstacle obstacle = new Obstacle();
 //        Wall wall1 = new Wall(0,5,4,7);
@@ -71,25 +89,4 @@ public class App {
 //
 
     }
-
-    private List<Obstacle> defineObstacles(List<Wall> segments){
-        List<Obstacle> obstacles = new LinkedList<>();
-        boolean found = false;
-
-        for (Wall segment : segments) {
-            for (int j = 0; j < obstacles.size() && !found; j++) {
-                Obstacle obstacle = obstacles.get(j);
-                found = obstacle.addCorner(segment);
-            }
-            if (!found) {
-                Obstacle obstacle = new Obstacle();
-                obstacle.addSegment(segment);
-                obstacles.add(obstacle);
-            }
-        }
-
-        return obstacles;
-    }
-
-
 }
