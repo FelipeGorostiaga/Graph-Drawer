@@ -15,7 +15,6 @@ public class Obstacle {
         return segments;
     }
 
-
     /* Sees if segment is part of obstacle,
        if it is part it is added and returns true,
        else returns false

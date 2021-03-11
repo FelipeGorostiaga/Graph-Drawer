@@ -46,24 +46,6 @@ public class Wall {
         return p2;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Wall wall = (Wall) o;
-
-        if (!p1.equals(wall.p1)) return false;
-        return p2.equals(wall.p2);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = p1.hashCode();
-        result = 31 * result + p2.hashCode();
-        return result;
-    }
-
     public boolean intersect(Wall other){
         // Find the four orientations needed for general and
         // special cases
@@ -120,6 +102,15 @@ public class Wall {
         return (val > 0)? 1: 2;
     }
 
+    public Vector<Double> getCenter() {
+        final Vector<Double> wallCenter = new Vector<>(2);
+        double x = Math.abs((p1.get(0) - p2.get(0)) / 2);
+        double y = Math.abs((p1.get(1) - p2.get(1)) / 2);
+        wallCenter.add(x);
+        wallCenter.add(y);
+        return wallCenter;
+    }
+
     public boolean inWall(Vector<Double> point){
         return distance(p1 ,point) + distance(point, p2) == distance(p1, p2);
     }
@@ -129,6 +120,25 @@ public class Wall {
         double y = Math.pow(a.get(1) - b.get(1), 2);
         return Math.sqrt(x + y);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Wall wall = (Wall) o;
+
+        if (!p1.equals(wall.p1)) return false;
+        return p2.equals(wall.p2);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = p1.hashCode();
+        result = 31 * result + p2.hashCode();
+        return result;
+    }
+
 //    public boolean isParallel(Wall other){
 //        boolean bool = false;
 //        if (p1.get(0).equals(p2.get(0)) && other.getP1().get(0).equals(other.getP2().get(0))) {

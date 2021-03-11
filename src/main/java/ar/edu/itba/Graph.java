@@ -15,13 +15,13 @@ public class Graph {
         List<Vector<Double>> points = grid.getPoints();
 
         for(Vector<Double> point: points){
-            Node node = new Node(point);
+            Node node = new Node(point.get(0), point.get(1));
             for (Node other: nodes){
-                if((Math.abs(point.get(0) - other.getPosition().get(0)) == size
-                        && point.get(1).equals(other.getPosition().get(1)))
-                        || (Math.abs(point.get(1) - other.getPosition().get(1)) == size
-                        && point.get(0).equals(other.getPosition().get(0)))){
-                    Wall edge = new Wall(point.get(0), point.get(1), other.getPosition().get(0), other.getPosition().get(1));
+                if((Math.abs(point.get(0) - other.getX()) == size
+                        && point.get(1).equals(other.getY()))
+                        || (Math.abs(point.get(1) - other.getY()) == size
+                        && point.get(0).equals(other.getX()))){
+                    Wall edge = new Wall(point.get(0), point.get(1), other.getX(), other.getY());
                     boolean intersect = false;
                     for (int i = 0; i < obstacles.size() && !intersect ; i++){
                         List<Wall> walls = obstacles.get(i).getSegments();
