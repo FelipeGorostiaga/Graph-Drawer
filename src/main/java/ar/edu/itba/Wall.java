@@ -124,12 +124,10 @@ public class Wall {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof Wall)) return false;
         Wall wall = (Wall) o;
-
-        if (!p1.equals(wall.p1)) return false;
-        return p2.equals(wall.p2);
+        return (p1.get(0).equals(wall.p2.get(0))) &&
+                (p1.get(1).equals(wall.p2.get(1)));
     }
 
     @Override

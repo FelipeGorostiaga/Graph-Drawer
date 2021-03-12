@@ -19,7 +19,7 @@ public class FileManager {
             System.out.println("Failed to read files...");
             System.exit(1);
         }
-        
+
         dimensions.add(sc.nextDouble());
         dimensions.add(sc.nextDouble());
 

@@ -9,7 +9,7 @@ public class Node {
     private double y;
     private final Set<Node> neighbours;
 
-    public Node(double x, double y){
+    public Node(double x, double y) {
         this.x = x;
         this.y = y;
         neighbours = new HashSet<>();
@@ -35,7 +35,7 @@ public class Node {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -43,17 +43,35 @@ public class Node {
         return neighbours;
     }
 
-    public void addNeighbour(Node neighbour){
+    public void addNeighbour(Node neighbour) {
         neighbours.add(neighbour);
     }
 
-    public void printNode(){
-        System.out.print("Node " + this.id);
-        System.out.println("Neighbours:");
-        for (Node node: neighbours) {
+    public void printNode() {
+        System.out.print("Node " + this.id + " --> [");
+        for (Node node : neighbours) {
             System.out.print(" " + node.getId());
         }
-        System.out.print("\n");
+        System.out.print(" ]\n");
     }
 
+    @Override
+    public String toString() {
+        return "Node{" +
+                "id=" + id +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Node)) return false;
+        Node node = (Node) o;
+        return id == node.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
