@@ -34,7 +34,7 @@ public class App {
         graph.gridToGraph(grid, cellLength, obstacles);
 
         // trim useless nodes
-        //graph.trimRedundantNodes();
+        graph.trimRedundantNodes();
 
         FileManager.printGraph(graph, outFilename);
     }

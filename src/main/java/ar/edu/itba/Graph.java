@@ -77,41 +77,59 @@ public class Graph {
     }
 
 
-/*    public void addIdToNodes() {
+    public void addIdToNodes() {
         int i = 0;
         for (Node node : nodes) {
             node.setId(i);
             i++;
         }
-    }*/
+    }
 
     public void trimRedundantNodes() {
 
         // 1 <-> 2 <-> 3 and THEN 1 <-> 3 (if no obstacle between 1 <-> 3)
 
         boolean removed = false;
-        Set<Node> visited = new HashSet<>();
+        Set<Node> visited;
+        boolean trimmed;
 
+        for (int i = 0 ; i < 10 ; i++) {
 
-        for (Node node : nodes) {
+            visited = new HashSet<>();
 
-            visited.add(node);
+            for (Node node : nodes) {
 
-            List<Node> path = getRedundantPath(node, visited);
+                visited.add(node);
 
-            if (path != null) {
-                System.out.println("Found path:");
-                removePath(path.get(0), path.get(1), path.get(2));
-                break;
+                List<Node> path = getRedundantPath(node, visited);
+
+                if (path != null) {
+                    System.out.println("Found path:");
+                    removePath(path.get(0), path.get(1), path.get(2));
+                    break;
+                }
             }
 
         }
+        removeUnreachableNodes();
+        addIdToNodes();
+    }
+
+    private void removeUnreachableNodes() {
+        List<Node> removeList = new LinkedList<>();
+
+        for (Node node: nodes) {
+            if (node.getNeighbours().isEmpty()) {
+                removeList.add(node);
+            }
+        }
+        nodes.removeAll(removeList);
+
     }
 
     private List<Node> getRedundantPath(Node node1, Set<Node> visited) {
-        List<Node> redundantPath = new LinkedList<>();
 
-        System.out.println(visited);
+        List<Node> redundantPath = new LinkedList<>();
 
         // Go to neighbour
         for (Node node2 : node1.getNeighbours()) {
@@ -151,6 +169,10 @@ public class Graph {
         // remove 1 <--X--> 2
         node1.getNeighbours().remove(node2);
         node2.getNeighbours().remove(node1);
+
+        // remove 2 <--X--> 3
+        node3.getNeighbours().remove(node2);
+        node2.getNeighbours().remove(node3);
 
         // create 1 <--> 3
         node1.addNeighbour(node3);
