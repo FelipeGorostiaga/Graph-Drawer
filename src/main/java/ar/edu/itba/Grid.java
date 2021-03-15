@@ -1,50 +1,25 @@
 package ar.edu.itba;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import static ar.edu.itba.App.segments;
 
-import static ar.edu.itba.App.walls;
+
 
 public class Grid {
 
     private List<Vector<Double>> points;
-    private final Double [][][] grid;
+    private Double [][][] grid;
     private final double height;
     private final double width;
     private final double size;
-    private final int rows;
-    private final int cols;
+    private int rows;
+    private int cols;
 
     public Grid(double width, double height, double size) {
 
-        double divH = height / size;
-        if (divH % 1 == 0) divH -= 1;
-        double divW = width / size;
-        if (divW % 1 == 0) divW -= 1;
-
-        rows = (int) Math.floor(divH);
-        cols = (int) Math.floor(divW);
-
-        grid = new Double[rows][cols][2];
-
-        for (int row = 0 ; row < rows ; row++) {
-            for (int col = 0 ; col < cols ; col++) {
-
-                double x = row == 0 ? size : size * row;
-                double y = col == 0 ? size : size * col;
-                grid[row][col][0] = x;
-                grid[row][col][1] = y;
-            }
-        }
-
-        for (int row = 0 ; row < rows ; row++) {
-            for (int col = 0 ; col < cols ; col++) {
-                System.out.println("[" + grid[row][col][0] + ", " + grid[row][col][1] + "]");
-            }
-        }
-
-
-/*        points = new LinkedList<>();
+        points = new LinkedList<>();
         for(double x = size; x < width; x += size){
             for(double y = size; y < height; y += size ){
                 Vector<Double> point = new Vector<>(2);
@@ -52,7 +27,8 @@ public class Grid {
                 point.add(y);
                 points.add(point);
             }
-        }*/
+        }
+
         this.height = height;
         this.width = width;
         this.size = size;
@@ -60,7 +36,7 @@ public class Grid {
 
     public static boolean areReachableNodes(Node node, Node other) {
         Wall nodeWall = new Wall(node.getX(), node.getY(), other.getX(), other.getY());
-        for (Wall wall: walls) {
+        for (Wall wall: segments) {
             if (wall.intersect(nodeWall)) {
                 return false;
             }
@@ -71,29 +47,7 @@ public class Grid {
 
     public void removePointsInside(final List<Obstacle> obstacles){
 
-        for (int row = 0 ; row < rows ; row++) {
-            for (int col = 0 ; col < cols ; col++) {
-
-                for (Obstacle obstacle: obstacles){
-                    boolean isInside = false;
-
-                    Vector<Double> point = new Vector<>(2);
-
-                    if (grid[row][col] != null) {
-                        point.add(grid[row][col][0]);
-                        point.add(grid[row][col][1]);
-                    }
-
-                    if(obstacle.isInside(point, width)){
-                        System.out.println("Removing point");
-                        grid[row][col] = null;
-                    }
-                }
-
-            }
-        }
-
-/*        List<Vector<Double>> aux = new LinkedList<>();
+        List<Vector<Double>> aux = new LinkedList<>();
         for (Obstacle obstacle: obstacles){
             boolean isInside = false;
             for (Vector<Double> point: points){
@@ -101,9 +55,10 @@ public class Grid {
                     aux.add(point);
                 }
             }
-        }*/
-        /*System.out.println("Removed " + aux.size() + " points inside obstacles");
-        points.removeAll(aux);*/
+        }
+
+        points.removeAll(aux);
+        System.out.println("Removed " + aux.size() + " points inside obstacles");
     }
 
     public List<Vector<Double>> getPoints() {

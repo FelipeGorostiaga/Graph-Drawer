@@ -15,6 +15,13 @@ public class Node {
         neighbours = new HashSet<>();
     }
 
+    public Node(double x, double y, int id) {
+        this.x = x;
+        this.y = y;
+        this.id = id;
+        neighbours = new HashSet<>();
+    }
+
     public double getX() {
         return x;
     }

@@ -2,11 +2,11 @@ package ar.edu.itba;
 
 import java.util.*;
 
-import static ar.edu.itba.App.walls;
+import static ar.edu.itba.App.segments;
 
 public class Graph {
 
-    private List<Node> nodes;
+    private final List<Node> nodes;
 
     public Graph() {
         nodes = new LinkedList<>();
@@ -16,9 +16,10 @@ public class Graph {
 
         List<Vector<Double>> points = grid.getPoints();
 
+        int id = 0;
         for (Vector<Double> point : points) {
 
-            Node node = new Node(point.get(0), point.get(1));
+            Node node = new Node(point.get(0), point.get(1), id++);
 
             for (Node other : nodes) {
 
@@ -50,117 +51,9 @@ public class Graph {
 
             nodes.add(node);
         }
-
-
     }
 
-    public Graph(Grid gridImpl) {
 
-        nodes = new LinkedList<>();
-        int rows = gridImpl.getRows();
-        int cols = gridImpl.getCols();
-        Double[][][] grid = gridImpl.getGrid();
-
-        for (int row = 0 ; row < rows ; rows++) {
-
-            for (int col = 0 ; col < cols ; cols++) {
-
-                if (grid[row][col] != null) {
-
-                    double x = grid[row][col][0];
-                    double y = grid[row][col][1];
-
-                    Node node = new Node(x, y);
-
-                    List<Node> adjacentNodes = getAdjacentNodes(grid, row, col, rows, cols);
-
-                    for (Node other: adjacentNodes) {
-                        joinIfNoIntersection(node, other);
-                    }
-
-                    nodes.add(node);
-                }
-            }
-        }
-    }
-
-    private List<Node> getAdjacentNodes(Double[][][] grid, int row, int col, int rows, int cols) {
-
-        List<Node> adjNodes = new ArrayList<>();
-
-        System.out.println("Row " + row + " of " + rows);
-        System.out.println("Col " + col + " of " + cols);
-
-        for (int r = 0 ; r < rows ; r++) {
-            for (int c = 0 ; c < cols ; c++) {
-                System.out.println("[" + grid[r][c][0] + ", " + grid[r][c][1] + "]");
-            }
-        }
-
-
-        // UP
-        if ((row + 1) < rows) {
-            System.out.println("Accessing: [" + (row + 1) + "] [" + col + "]");
-            if (grid[row + 1][col] != null) {
-
-                double x = grid[row + 1][col][0];
-                double y = grid[row + 1][col][1];
-                Node node = findNodeByCoordinates(x,y);
-
-                if (node != null) {
-                    adjNodes.add(node);
-                }
-            }
-        }
-
-        // DOWN
-        if ((row - 1) >= 0) {
-            System.out.println("Accessing: [" + (row - 1) + "] [" + col + "]");
-            if (grid[row - 1][col] != null) {
-
-                double x = grid[row - 1][col][0];
-                double y = grid[row - 1][col][1];
-                Node node = findNodeByCoordinates(x,y);
-
-                if (node != null) {
-                    adjNodes.add(node);
-                }
-            }
-        }
-
-        // LEFT
-        if ((col - 1) >= 0) {
-            System.out.println("Accessing: [" + row + "] [" + (col - 1) + "]");
-            if (grid[row][col - 1] != null) {
-
-                double x = grid[row][col - 1][0];
-                double y = grid[row][col - 1][1];
-                Node node = findNodeByCoordinates(x,y);
-
-                if (node != null) {
-                    adjNodes.add(node);
-                }
-            }
-        }
-
-        // RIGHT
-        if ((col + 1) < cols) {
-            System.out.println("Accessing: [" + row + "] [" + (col + 1) + "]");
-            if (grid[row][col + 1] != null) {
-
-                double x = grid[row][col + 1][0];
-                double y = grid[row][col + 1][1];
-                Node node = findNodeByCoordinates(x,y);
-
-                if (node != null) {
-                    adjNodes.add(node);
-                }
-            }
-        }
-
-        return adjNodes;
-
-    }
 
     private Node findNodeByCoordinates(double x, double y) {
         return nodes.stream().filter(node -> node.getX() == x && node.getY() == y).findAny().orElse(null);
@@ -170,7 +63,7 @@ public class Graph {
     private void joinIfNoIntersection(Node node, Node other) {
         Wall edge = new Wall(node.getX(), node.getY(), other.getX(), other.getY());
         boolean intersect = false;
-        for (Wall wall: walls) {
+        for (Wall wall: segments) {
             if (edge.intersect(wall)) {
                 intersect = true;
                 break;
@@ -184,46 +77,13 @@ public class Graph {
     }
 
 
-/*    public Graph(Grid grid) {
-
-        nodes = new LinkedList<>();
-        List<Vector<Double>> points = grid.getPoints();
-
-        for (Vector<Double> gridPoint : points) {
-
-            Node node = new Node(gridPoint.get(0), gridPoint.get(1));
-
-            for (Node other: nodes) {
-
-                boolean intersect = false;
-                Wall edge = new Wall(gridPoint.get(0), gridPoint.get(1), other.getX(), other.getY());
-
-                for (Wall wall: walls) {
-
-                    if (edge.intersect(wall)) {
-                        intersect = true;
-                        break;
-                    }
-                }
-
-                if (!intersect) {
-                    node.addNeighbour(other);
-                    other.addNeighbour(node);
-                }
-            }
-
-            nodes.add(node);
-        }
-    }*/
-
-
-    public void addIdToNodes() {
+/*    public void addIdToNodes() {
         int i = 0;
         for (Node node : nodes) {
             node.setId(i);
             i++;
         }
-    }
+    }*/
 
     public void trimRedundantNodes() {
 

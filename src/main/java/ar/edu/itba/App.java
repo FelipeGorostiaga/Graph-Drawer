@@ -8,22 +8,20 @@ public class App {
     private static final String inFilename = "files/text.txt";
     private static final String outFilename = "graph-nodes.xyz";
 
-    // width, height
-    static Vector<Double> dimensions = new Vector<>(2);
-    static List<Wall> walls;
+    // width 0 , height 1
+    public static Vector<Double> dimensions = new Vector<>(2);
+    public static List<Wall> segments;
 
-
-    static List<Obstacle> obstacles;
+    public static List<Obstacle> obstacles;
 
     public static void main(String[] args) {
 
-        walls = FileManager.readFile(inFilename, dimensions);
-        obstacles = Obstacle.defineObstacles(walls);
+        segments = FileManager.readFile(inFilename, dimensions);
+        obstacles = Obstacle.defineObstacles(segments);
 
         // must be smaller than min length between walls
-        final double cellLength = Grid.calculateCellLength(walls);
+        final double cellLength = Grid.calculateCellLength(segments);
 
-        System.out.println("Cell length: " + cellLength);
 
         // create grid of nodes
         Grid grid = new Grid(dimensions.get(0), dimensions.get(1), cellLength);
@@ -32,10 +30,10 @@ public class App {
         grid.removePointsInside(obstacles);
 
         // convert grid to graph of nodes
-        /*Graph graph = new Graph();
-        graph.gridToGraph(grid, cellLength, obstacles);*/
-        Graph graph = new Graph(grid);
-        graph.addIdToNodes();
+        Graph graph = new Graph();
+        graph.gridToGraph(grid, cellLength, obstacles);
+
+        // trim useless nodes
         //graph.trimRedundantNodes();
 
         FileManager.printGraph(graph, outFilename);
