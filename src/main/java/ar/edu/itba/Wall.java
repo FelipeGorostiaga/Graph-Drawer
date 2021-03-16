@@ -8,8 +8,18 @@ public class Wall {
     private final Vector<Double> p1;
     // x2 y2
     private final Vector<Double> p2;
-    // type
+
     private int type;
+
+    public Wall(double x1, double y1, double x2, double y2, int type) {
+        p1 = new Vector<>(2);
+        p2 = new Vector<>(2);
+        p1.add(x1);
+        p1.add(y1);
+        p2.add(x2);
+        p2.add(y2);
+        this.type = type;
+    }
 
     public Wall(double x1, double y1, double x2, double y2) {
         p1 = new Vector<>(2);
@@ -25,16 +35,6 @@ public class Wall {
     }
 
     public void setType(int type) {
-        this.type = type;
-    }
-
-    public Wall(double x1, double y1, double x2, double y2, int type) {
-        p1 = new Vector<>(2);
-        p2 = new Vector<>(2);
-        p1.add(x1);
-        p1.add(y1);
-        p2.add(x2);
-        p2.add(y2);
         this.type = type;
     }
 
@@ -137,7 +137,15 @@ public class Wall {
         return result;
     }
 
-//    public boolean isParallel(Wall other){
+    @Override
+    public String toString() {
+        return "Wall{" +
+                "p1=" + p1.get(0) + " " + p1.get(1) +
+                ", p2=" + p2.get(0) + " " + p2.get(1) +
+                '}';
+    }
+
+    //    public boolean isParallel(Wall other){
 //        boolean bool = false;
 //        if (p1.get(0).equals(p2.get(0)) && other.getP1().get(0).equals(other.getP2().get(0))) {
 //            return true;

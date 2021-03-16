@@ -10,12 +10,10 @@ import static ar.edu.itba.App.segments;
 public class Grid {
 
     private List<Vector<Double>> points;
-    private Double [][][] grid;
+
     private final double height;
     private final double width;
     private final double size;
-    private int rows;
-    private int cols;
 
     public Grid(double width, double height, double size) {
 
@@ -67,18 +65,6 @@ public class Grid {
 
     public void setPoints(List<Vector<Double>> points) {
         this.points = points;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getCols() {
-        return cols;
-    }
-
-    public Double[][][] getGrid() {
-        return grid;
     }
 
     public double getHeight() {

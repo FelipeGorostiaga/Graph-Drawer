@@ -6,7 +6,7 @@ import static ar.edu.itba.App.segments;
 
 public class Graph {
 
-    private final List<Node> nodes;
+    public static List<Node> nodes;
 
     public Graph() {
         nodes = new LinkedList<>();
@@ -93,7 +93,7 @@ public class Graph {
         Set<Node> visited;
         boolean trimmed;
 
-        for (int i = 0 ; i < 10 ; i++) {
+        for (int i = 0 ; i < 100000 ; i++) {
 
             visited = new HashSet<>();
 
@@ -104,7 +104,6 @@ public class Graph {
                 List<Node> path = getRedundantPath(node, visited);
 
                 if (path != null) {
-                    System.out.println("Found path:");
                     removePath(path.get(0), path.get(1), path.get(2));
                     break;
                 }

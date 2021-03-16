@@ -1,12 +1,14 @@
 package ar.edu.itba;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
 public class App {
 
     private static final String inFilename = "files/text.txt";
-    private static final String outFilename = "graph-nodes.xyz";
+    private static final String outFilename = "nodes.xyz";
 
     // width 0 , height 1
     public static Vector<Double> dimensions = new Vector<>(2);
@@ -20,8 +22,8 @@ public class App {
         obstacles = Obstacle.defineObstacles(segments);
 
         // must be smaller than min length between walls
-        final double cellLength = Grid.calculateCellLength(segments);
-
+        //final double cellLength = Grid.calculateCellLength(segments);
+        final double cellLength = 2.0;
 
         // create grid of nodes
         Grid grid = new Grid(dimensions.get(0), dimensions.get(1), cellLength);
@@ -34,8 +36,12 @@ public class App {
         graph.gridToGraph(grid, cellLength, obstacles);
 
         // trim useless nodes
-        graph.trimRedundantNodes();
+        //graph.trimRedundantNodes();
 
+        // add nodes to file
         FileManager.printGraph(graph, outFilename);
+
+        // draw geometry + graph
+        Drawer.init();
     }
 }

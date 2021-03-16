@@ -26,11 +26,15 @@ public class FileManager {
         List<Wall> walls = new ArrayList<>();
 
         while (sc.hasNextLine()){
-            int type = sc.nextInt();
-            Wall wall = new Wall(sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), type);
-            walls.add(wall);
+            try {
+                int type = sc.nextInt();
+                Wall wall = new Wall(sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), type);
+                walls.add(wall);
+            }
+            catch (Exception e) {
+                break;
+            }
         }
-
         return walls;
     }
 
