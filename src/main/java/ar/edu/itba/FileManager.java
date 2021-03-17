@@ -3,6 +3,8 @@ package ar.edu.itba;
 import java.io.*;
 import java.util.*;
 
+import static ar.edu.itba.Graph.nodes;
+
 public class FileManager {
 
     private FileManager(){
@@ -40,7 +42,6 @@ public class FileManager {
 
     public static void printGraph(Graph graph, String filename){
 
-        List<Node> nodes = graph.getNodes();
 
         File file = new File(filename);
 
@@ -48,10 +49,10 @@ public class FileManager {
             if(file.createNewFile()){
                 System.out.println("File created: " + file.getName());
             }else{
-                System.out.println("File already exists.");
+                System.out.println("File already exists");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred...");
             e.printStackTrace();
         }
 
