@@ -55,23 +55,7 @@ public class Graph {
         }
     }
 
-    private void joinIfNoIntersection(Node node, Node other) {
-        Wall edge = new Wall(node.getX(), node.getY(), other.getX(), other.getY());
-        boolean intersect = false;
-        for (Wall wall : segments) {
-            if (edge.intersect(wall)) {
-                intersect = true;
-                break;
-            }
-        }
-        if (!intersect) {
-            System.out.println("Adding edges between nodes " + node.getId() + " and " + other.getId());
-            node.addNeighbour(other);
-            other.addNeighbour(node);
-        }
-    }
-
-    public void addIdToNodes() {
+    public static void addIdToNodes() {
         int i = 0;
         for (Node node : nodes) {
             node.setId(i);
@@ -79,7 +63,7 @@ public class Graph {
         }
     }
 
-    public void trimRedundantNodes() {
+    public static void trimRedundantNodes() {
 
         // 1 <-> 2 <-> 3 and THEN 1 <-> 3 (if no obstacle between 1 <-> 3)
 
@@ -117,7 +101,7 @@ public class Graph {
     }
 
     // remove nodes with no edges
-    private void removeUnreachableNodes() {
+    private static void removeUnreachableNodes() {
         List<Node> removeList = new LinkedList<>();
 
         for (Node node : nodes) {
@@ -128,7 +112,7 @@ public class Graph {
         nodes.removeAll(removeList);
     }
 
-    private List<Node> getRedundantPath(Node node1, Set<Node> visited) {
+    private static List<Node> getRedundantPath(Node node1, Set<Node> visited) {
 
         List<Node> redundantPath = new LinkedList<>();
         // Go to neighbour
@@ -155,7 +139,7 @@ public class Graph {
         return null;
     }
 
-    private void removePath(Node node1, Node node2, Node node3) {
+    private static void removePath(Node node1, Node node2, Node node3) {
 
         // remove 1 <--X--> 2
         node1.getNeighbours().remove(node2);
@@ -268,6 +252,7 @@ public class Graph {
         removeRedundantEdges(nodes);
         List<Node> nodesWNoNeighs = nodes.stream().filter(n->n.getNeighbours().size() == 0).collect(Collectors.toList());
         nodes.removeAll(nodesWNoNeighs);
+        //trimRedundantNodes();
     }
 
     private static class Markable<T> {

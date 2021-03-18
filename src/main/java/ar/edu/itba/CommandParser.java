@@ -52,7 +52,7 @@ public class CommandParser {
             }
 
             if (cmd.hasOption("o")) {
-                outFilename = cmd.getOptionValue("i");
+                outFilename = cmd.getOptionValue("o");
             }
             else {
                 outFilename = "nodes.xyz";

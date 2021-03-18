@@ -31,6 +31,7 @@ public class App {
         graph.trimRedundantNodes();
         ;*/
 
+
         Graph graph = new Graph();
         graph.generateGraph();
         FileManager.printGraph();
