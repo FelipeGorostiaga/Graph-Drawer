@@ -1,7 +1,9 @@
 package ar.edu.itba;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static ar.edu.itba.App.cellLength;
 import static ar.edu.itba.App.segments;
 
 public class Graph {
@@ -53,12 +55,6 @@ public class Graph {
         }
     }
 
-
-    private Node findNodeByCoordinates(double x, double y) {
-        return nodes.stream().filter(node -> node.getX() == x && node.getY() == y).findAny().orElse(null);
-    }
-
-
     private void joinIfNoIntersection(Node node, Node other) {
         Wall edge = new Wall(node.getX(), node.getY(), other.getX(), other.getY());
         boolean intersect = false;
@@ -74,7 +70,6 @@ public class Graph {
             other.addNeighbour(node);
         }
     }
-
 
     public void addIdToNodes() {
         int i = 0;
@@ -121,7 +116,6 @@ public class Graph {
         addIdToNodes();
     }
 
-
     // remove nodes with no edges
     private void removeUnreachableNodes() {
         List<Node> removeList = new LinkedList<>();
@@ -137,22 +131,16 @@ public class Graph {
     private List<Node> getRedundantPath(Node node1, Set<Node> visited) {
 
         List<Node> redundantPath = new LinkedList<>();
-
         // Go to neighbour
         for (Node node2 : node1.getNeighbours()) {
-
             if (node2.getNeighbours().size() == 2) {
-
                 // 2-jump neighbour
                 for (Node node3 : node2.getNeighbours()) {
-
                     // prevent cycle 1 <--> 2 <--> 1
                     if (!node3.equals(node1)) {
 
                         //if (!visited.contains(node3)) {
-
                         visited.add(node3);
-
                         if (Grid.areReachableNodes(node1, node3)) {
                             redundantPath.add(node1);
                             redundantPath.add(node2);
@@ -160,13 +148,9 @@ public class Graph {
                             return redundantPath;
                         }
                         //}
-
-
                     }
-
                 }
             }
-
         }
         return null;
     }
@@ -184,6 +168,151 @@ public class Graph {
         // create 1 <--> 3
         node1.addNeighbour(node3);
         node3.addNeighbour(node1);
+    }
+
+    private static List<Quadrant> getQuadrants() {
+        List<Double> yLimits = segments.stream()
+                .map(wall -> wall.getP1().get(1))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        List<Quadrant> quads = new ArrayList<>();
+        for (int i = 0; i < yLimits.size() - 1; i++) {
+            double yMin = yLimits.get(i);
+            double yMax = yLimits.get(i + 1);
+            List<Double> xLimits = new ArrayList<>();
+
+            for (Wall w : segments.stream()
+                    .filter(wall -> (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) <= 0
+                            && Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMax) >= 0)
+                            || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)
+                            || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMax) == 0)
+                            || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMax) == 0)
+                            || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)).collect(Collectors.toList())) {
+                if (!xLimits.contains(w.getP1().get(0)))
+                    xLimits.add(w.getP1().get(0));
+                if (!xLimits.contains(w.getP2().get(0)))
+                    xLimits.add(w.getP2().get(0));
+            }
+            xLimits.sort((x, y) -> (int) Math.signum(x - y));
+            for (int j = 0; j < xLimits.size() - 1; j++) {
+                quads.add(new Quadrant(xLimits.get(j), xLimits.get(j + 1), yLimits.get(i), yLimits.get(i + 1), cellLength));
+            }
+        }
+        return quads;
+    }
+
+    private static void joinNodes(List<Quadrant> quadrants) {
+        LinkedList<Markable<Quadrant>> quads = new LinkedList<>();
+        quads.addAll(quadrants.stream().map(Markable::new).collect(Collectors.toList()));
+        quads.getFirst().setMarked(true);
+        // Here, neighbours are assigned in a BFS fashion
+        while (!quads.isEmpty()) {
+            Markable<Quadrant> curr = quads.removeFirst();
+            quads.stream()
+                    .filter(x -> curr.getEntity().neighbours(x.getEntity()) /*&& !x.isMarked()*/)
+                    .forEach(x -> {
+                        double minDist = Double.POSITIVE_INFINITY;
+                        Node bestCurrNode = null, bestXNode = null;
+                        for (Node currNode : curr.getEntity().getNodes()) {
+                            for (Node xNode : x.getEntity().getNodes()) {
+                                if (Grid.areReachableNodes(currNode, xNode)
+                                        && Grid.distance(currNode, xNode) < minDist) {
+                                    minDist = Grid.distance(currNode, xNode);
+                                    bestCurrNode = currNode;
+                                    bestXNode = xNode;
+                                }
+                            }
+                        }
+                        if (bestCurrNode != null && bestXNode != null) {
+                            if (!bestCurrNode.getNeighbours().contains(bestXNode))
+                                bestCurrNode.addNeighbour(bestXNode);
+                            if (!bestXNode.getNeighbours().contains(bestCurrNode))
+                                bestXNode.addNeighbour(bestCurrNode);
+                        }
+                        x.setMarked(true);
+                    });
+
+        }
+    }
+
+    /**
+     * Removes unnecessary edges between nodes which share a neighbour
+     *
+     * @param nodes List of nodes, preferrably with neighbours
+     */
+    private static void removeRedundantEdges (List<Node> nodes) {
+        for(Node node : nodes) {
+            if (node.getNeighbours().size() > 4) {
+                // boolean removeNeighs = false;
+                for (Node neigh : node.getNeighbours()) {
+                    if(!neigh.getNeighbours().contains(node))
+                        continue;
+                    Set<Node> intersection = new HashSet<>(node.getNeighbours());
+                    intersection.retainAll(neigh.getNeighbours());
+
+                    for (Node sharedNeigh : intersection) {
+                        if (Grid.distance(sharedNeigh, node) >
+                                Grid.distance(sharedNeigh, neigh))
+                            sharedNeigh.removeNeighbour(node);
+                    }
+                }
+                node.getNeighbours().removeAll(node.getNeighbours().stream().filter(n->!n.getNeighbours().contains(node)).collect(Collectors.toList()));
+            }
+        }
+    }
+
+    /**
+     * Main method for automatically generating a grid given a list of wall
+     * segments.
+     * Analyzed area MUST be surrounded by walls
+     *
+     */
+    public static List<Node> generateGraph() {
+        List<Node> nodeList = new LinkedList<>();
+        List<Quadrant> quadrants = getQuadrants();
+        System.out.println("Quadrants:" + quadrants.size());
+        joinNodes(quadrants);
+        quadrants.forEach(x -> nodeList.addAll(x.getNodes()));
+        int i = 0;
+        for (Node n : nodeList) {
+            n.setId(i++);
+        }
+        removeRedundantEdges(nodeList);
+        List<Node> nodesWNoNeighs = nodeList.stream().filter(n->n.getNeighbours().size() == 0).collect(Collectors.toList());
+        nodeList.removeAll(nodesWNoNeighs);
+        return nodeList;
+    }
+
+
+    /**
+     * Utility class for wrapping and being able to mark
+     * a structure, useful in stack- or queue-based algorithms
+     */
+    private static class Markable<T> {
+        private boolean marked = false;
+        private T entity;
+
+        Markable(T entity) {
+            this.setEntity(entity);
+        }
+
+        public T getEntity() {
+            return entity;
+        }
+
+        public void setEntity(T entity) {
+            this.entity = entity;
+        }
+
+        public boolean isMarked() {
+            return marked;
+        }
+
+        public void setMarked(boolean marked) {
+            this.marked = marked;
+        }
+
     }
 
 }

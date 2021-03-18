@@ -40,7 +40,7 @@ public class FileManager {
         return walls;
     }
 
-    public static void printGraph(Graph graph, String filename){
+    public static void printGraph(List<Node> nodes, String filename){
 
 
         File file = new File(filename);

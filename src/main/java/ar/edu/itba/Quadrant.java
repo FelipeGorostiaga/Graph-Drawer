@@ -12,7 +12,7 @@ public class Quadrant {
     private double yMax;
     private Collection<Node> nodes = new HashSet<>();
 
-    public Quadrant(double xMin, double xMax, double yMin, double yMax, List<Wall> walls, double ind) {
+    public Quadrant(double xMin, double xMax, double yMin, double yMax, double ind) {
         this.xMin = xMin;
         this.xMax = xMax;
         this.yMin = yMin;

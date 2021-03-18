@@ -42,6 +42,10 @@ public class Grid {
         return true;
     }
 
+    public static double distance(Node n1, Node n2) {
+        return Math.sqrt(Math.pow(n1.getX()-n2.getX(),2)+Math.pow(n1.getY()-n2.getY(),2));
+    }
+
 
     public void removePointsInside(final List<Obstacle> obstacles){
 

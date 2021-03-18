@@ -54,6 +54,10 @@ public class Node {
         neighbours.add(neighbour);
     }
 
+    public void removeNeighbour(Node neighbour) {
+        neighbours.remove(neighbour);
+    }
+
     public void printNode() {
         System.out.print("Node " + this.id + " --> [");
         for (Node node : neighbours) {
