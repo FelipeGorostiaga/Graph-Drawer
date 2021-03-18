@@ -13,20 +13,16 @@ public class App {
     public static Vector<Double> dimensions = new Vector<>(2);
     public static List<Wall> segments;
     public static int scaleFactor;
-    public static double cellLength;
 
     public static List<Obstacle> obstacles;
 
     public static void main(String[] args) {
 
-        segments = FileManager.readFile(inFilename, dimensions);
+        CommandParser.parseCommandLine(args);
+
+        segments = FileManager.readFile(dimensions);
         obstacles = Obstacle.defineObstacles(segments);
         scaleFactor = calculateScaleFactor(dimensions);
-        
-        // must be smaller than min length between walls
-        //final double cellLength = Grid.calculateCellLength(segments);
-        
-        cellLength = 5.0;
 
 /*        Grid grid = new Grid(dimensions.get(0), dimensions.get(1), cellLength);
         grid.removePointsInside(obstacles);
@@ -35,10 +31,9 @@ public class App {
         graph.trimRedundantNodes();
         ;*/
 
-        List<Node> nodes = Graph.generateGraph();
-        FileManager.printGraph(nodes, outFilename);
-
-        System.out.println(nodes.size());
+        Graph graph = new Graph();
+        graph.generateGraph();
+        FileManager.printGraph();
 
         // draw geometry + graph
         Drawer.init();
@@ -46,7 +41,6 @@ public class App {
 
     private static int calculateScaleFactor(Vector<Double> dimensions) {
 
-        java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
         double maxDim = Math.max(dimensions.get(0), dimensions.get(1));
 
         if (maxDim <= 10) return 100;

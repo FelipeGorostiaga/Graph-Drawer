@@ -3,16 +3,18 @@ package ar.edu.itba;
 import java.io.*;
 import java.util.*;
 
+import static ar.edu.itba.CommandParser.outFilename;
 import static ar.edu.itba.Graph.nodes;
+import static ar.edu.itba.CommandParser.inFilename;
 
 public class FileManager {
 
     private FileManager(){
     }
 
-    public static List<Wall> readFile(String filename, Vector<Double> dimensions){
+    public static List<Wall> readFile(Vector<Double> dimensions){
 
-        File file = new File(filename);
+        File file = new File(inFilename);
         Scanner sc = null;
 
         try {
@@ -40,10 +42,10 @@ public class FileManager {
         return walls;
     }
 
-    public static void printGraph(List<Node> nodes, String filename){
+    public static void printGraph(){
 
 
-        File file = new File(filename);
+        File file = new File(outFilename);
 
         try {
             if(file.createNewFile()){

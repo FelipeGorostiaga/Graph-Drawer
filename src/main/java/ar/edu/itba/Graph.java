@@ -3,8 +3,8 @@ package ar.edu.itba;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ar.edu.itba.App.cellLength;
 import static ar.edu.itba.App.segments;
+import static ar.edu.itba.CommandParser.cellLength;
 
 public class Graph {
 
@@ -206,7 +206,6 @@ public class Graph {
         LinkedList<Markable<Quadrant>> quads = new LinkedList<>();
         quads.addAll(quadrants.stream().map(Markable::new).collect(Collectors.toList()));
         quads.getFirst().setMarked(true);
-        // Here, neighbours are assigned in a BFS fashion
         while (!quads.isEmpty()) {
             Markable<Quadrant> curr = quads.removeFirst();
             quads.stream()
@@ -236,11 +235,6 @@ public class Graph {
         }
     }
 
-    /**
-     * Removes unnecessary edges between nodes which share a neighbour
-     *
-     * @param nodes List of nodes, preferrably with neighbours
-     */
     private static void removeRedundantEdges (List<Node> nodes) {
         for(Node node : nodes) {
             if (node.getNeighbours().size() > 4) {
@@ -262,33 +256,20 @@ public class Graph {
         }
     }
 
-    /**
-     * Main method for automatically generating a grid given a list of wall
-     * segments.
-     * Analyzed area MUST be surrounded by walls
-     *
-     */
-    public static List<Node> generateGraph() {
-        List<Node> nodeList = new LinkedList<>();
+    public void generateGraph() {
         List<Quadrant> quadrants = getQuadrants();
         System.out.println("Quadrants:" + quadrants.size());
         joinNodes(quadrants);
-        quadrants.forEach(x -> nodeList.addAll(x.getNodes()));
+        quadrants.forEach(x -> nodes.addAll(x.getNodes()));
         int i = 0;
-        for (Node n : nodeList) {
+        for (Node n : nodes) {
             n.setId(i++);
         }
-        removeRedundantEdges(nodeList);
-        List<Node> nodesWNoNeighs = nodeList.stream().filter(n->n.getNeighbours().size() == 0).collect(Collectors.toList());
-        nodeList.removeAll(nodesWNoNeighs);
-        return nodeList;
+        removeRedundantEdges(nodes);
+        List<Node> nodesWNoNeighs = nodes.stream().filter(n->n.getNeighbours().size() == 0).collect(Collectors.toList());
+        nodes.removeAll(nodesWNoNeighs);
     }
 
-
-    /**
-     * Utility class for wrapping and being able to mark
-     * a structure, useful in stack- or queue-based algorithms
-     */
     private static class Markable<T> {
         private boolean marked = false;
         private T entity;
