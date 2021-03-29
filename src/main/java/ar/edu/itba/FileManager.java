@@ -67,6 +67,7 @@ public class FileManager {
         for(Node node: nodes){
             System.out.println(node.getId() + " " + node.getX() + " " + node.getY());
         }
+
         System.out.println("\n");
         for(Node node: nodes){
             node.printNode();
