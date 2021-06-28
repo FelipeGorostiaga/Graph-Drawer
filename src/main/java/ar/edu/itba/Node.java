@@ -1,6 +1,8 @@
 package ar.edu.itba;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class Node {
 

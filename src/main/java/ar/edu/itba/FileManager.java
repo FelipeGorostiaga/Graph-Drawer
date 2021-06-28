@@ -3,16 +3,16 @@ package ar.edu.itba;
 import java.io.*;
 import java.util.*;
 
+import static ar.edu.itba.CommandParser.inFilename;
 import static ar.edu.itba.CommandParser.outFilename;
 import static ar.edu.itba.Graph.nodes;
-import static ar.edu.itba.CommandParser.inFilename;
 
 public class FileManager {
 
-    private FileManager(){
+    private FileManager() {
     }
 
-    public static List<Wall> readFile(Vector<Double> dimensions){
+    public static List<Wall> readFile(Vector<Double> dimensions) {
 
         File file = new File(inFilename);
         Scanner sc = null;
@@ -29,28 +29,27 @@ public class FileManager {
 
         List<Wall> walls = new ArrayList<>();
 
-        while (sc.hasNextLine()){
+        while (sc.hasNextLine()) {
             try {
                 int type = sc.nextInt();
                 Wall wall = new Wall(sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), sc.nextDouble(), type);
                 walls.add(wall);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 break;
             }
         }
         return walls;
     }
 
-    public static void printGraph(){
+    public static void printGraph() {
 
 
         File file = new File(outFilename);
 
         try {
-            if(file.createNewFile()){
+            if (file.createNewFile()) {
                 System.out.println("File created: " + file.getName());
-            }else{
+            } else {
                 System.out.println("File already exists");
             }
         } catch (IOException e) {
@@ -64,12 +63,12 @@ public class FileManager {
             e.printStackTrace();
         }
 
-        for(Node node: nodes){
+        for (Node node : nodes) {
             System.out.println(node.getId() + " " + node.getX() + " " + node.getY());
         }
 
         System.out.println("\n");
-        for(Node node: nodes){
+        for (Node node : nodes) {
             node.printNode();
         }
 

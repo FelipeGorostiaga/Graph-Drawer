@@ -1,17 +1,19 @@
 package ar.edu.itba;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 public class Obstacle {
     private List<Wall> segments;
 
-    private static enum dir{down, left, up};
+    private static enum dir {down, left, up}
 
     public Obstacle() {
         segments = new LinkedList<>();
     }
 
-    public List<Wall> getSegments(){
+    public List<Wall> getSegments() {
         return segments;
     }
 
@@ -41,14 +43,14 @@ public class Obstacle {
         return false;
     }
 
-    public void addSegment(Wall segment){
+    public void addSegment(Wall segment) {
         segments.add(segment);
     }
 
-    public boolean isInside(Vector<Double> point, Double end){
+    public boolean isInside(Vector<Double> point, Double end) {
 
         //Obstacle cant have nothing inside with less than 3 segments
-        if(segments.size() < 3){
+        if (segments.size() < 3) {
             return false;
         }
 
@@ -56,9 +58,9 @@ public class Obstacle {
 
     }
 
-    private int flux(Vector<Double> point, dir dir, double end){
+    private int flux(Vector<Double> point, dir dir, double end) {
         Wall other;
-        switch (dir){
+        switch (dir) {
             case up:
                 other = new Wall(point.get(0), point.get(1), point.get(0), end);
                 break;
@@ -75,17 +77,17 @@ public class Obstacle {
         int corners = 0;
         int count = 0;
 
-        for(Wall segment: segments){
-            if(other.inWall(segment.getP1()) || other.inWall(segment.getP2())){
+        for (Wall segment : segments) {
+            if (other.inWall(segment.getP1()) || other.inWall(segment.getP2())) {
                 corners++;
             }
-            if(segment.inWall(point)) return 1;
-            if(segment.intersect(other)){
+            if (segment.inWall(point)) return 1;
+            if (segment.intersect(other)) {
                 count++;
             }
         }
 
-        corners = corners/2;
+        corners = corners / 2;
         return count - corners;
     }
 
@@ -93,10 +95,10 @@ public class Obstacle {
         List<Obstacle> obstacles = new LinkedList<>();
         List<Obstacle> aux = new LinkedList<>();
         for (Wall segment : segments) {
-            if(segment.getType() != 0){
+            if (segment.getType() != 0) {
                 for (int j = 0; j < obstacles.size(); j++) {
                     Obstacle obstacle = obstacles.get(j);
-                    if(obstacle.isPart(segment))
+                    if (obstacle.isPart(segment))
                         aux.add(obstacle);
 
                 }
@@ -107,13 +109,13 @@ public class Obstacle {
                     obstacles.add(obstacle);
                 } else {
                     aux.get(0).addSegment(segment);
-                    if(aux.size() > 1){
+                    if (aux.size() > 1) {
                         obstacles.removeAll(aux);
                         obstacles.add(Obstacle.unify(aux));
                     }
 
                 }
-            }else {
+            } else {
                 Obstacle obstacle = new Obstacle();
                 obstacle.addSegment(segment);
                 obstacles.add(obstacle);
@@ -127,11 +129,11 @@ public class Obstacle {
         return obstacles;
     }
 
-    public static Obstacle unify(List<Obstacle> obstacles){
+    public static Obstacle unify(List<Obstacle> obstacles) {
         Obstacle obstacle = new Obstacle();
 
-        for(Obstacle obs : obstacles){
-            for (Wall segment: obs.getSegments()){
+        for (Obstacle obs : obstacles) {
+            for (Wall segment : obs.getSegments()) {
                 obstacle.addSegment(segment);
             }
 

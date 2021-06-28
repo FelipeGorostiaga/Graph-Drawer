@@ -46,7 +46,7 @@ public class Wall {
         return p2;
     }
 
-    public boolean intersect(Wall other){
+    public boolean intersect(Wall other) {
         // Find the four orientations needed for general and
         // special cases
         int o1 = orientation(p1, p2, other.getP1());
@@ -78,9 +78,9 @@ public class Wall {
 
     //Given three collinear points p,q,r, the function checks if
     //point q lies on line segment 'pr'
-    private boolean onSegment(Vector<Double> p, Vector<Double> q, Vector<Double> r){
+    private boolean onSegment(Vector<Double> p, Vector<Double> q, Vector<Double> r) {
         if (q.get(0) <= Math.max(p.get(0), r.get(0)) && q.get(0) >= Math.min(p.get(0), r.get(0)) &&
-                q.get(1) <= Math.max(p.get(1), r.get(1)) && q.get(1) >= Math.min(p.get(1), r.get(1))){
+                q.get(1) <= Math.max(p.get(1), r.get(1)) && q.get(1) >= Math.min(p.get(1), r.get(1))) {
             return true;
         }
         return false;
@@ -91,7 +91,7 @@ public class Wall {
     // 0 --> p, q and r are colinear
     // 1 --> Clockwise
     // 2 --> Counterclockwise
-    private int orientation(Vector<Double> p, Vector<Double> q, Vector<Double> r){
+    private int orientation(Vector<Double> p, Vector<Double> q, Vector<Double> r) {
         // See https://www.geeksforgeeks.org/orientation-3-ordered-points/
         // for details of below formula.
         double val = (q.get(1) - p.get(1)) * (r.get(0) - q.get(0)) -
@@ -99,7 +99,7 @@ public class Wall {
 
         if (val == 0) return 0;
 
-        return (val > 0)? 1: 2;
+        return (val > 0) ? 1 : 2;
     }
 
     public Vector<Double> getCenter() {
@@ -111,11 +111,11 @@ public class Wall {
         return wallCenter;
     }
 
-    public boolean inWall(Vector<Double> point){
-        return distance(p1 ,point) + distance(point, p2) == distance(p1, p2);
+    public boolean inWall(Vector<Double> point) {
+        return distance(p1, point) + distance(point, p2) == distance(p1, p2);
     }
 
-    private double distance(Vector<Double> a, Vector<Double> b){
+    private double distance(Vector<Double> a, Vector<Double> b) {
         double x = Math.pow(a.get(0) - b.get(0), 2);
         double y = Math.pow(a.get(1) - b.get(1), 2);
         return Math.sqrt(x + y);

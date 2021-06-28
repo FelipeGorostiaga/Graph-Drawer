@@ -16,7 +16,7 @@ public class CommandParser {
         options.addOption("h", "help", false, "Show help menu");
         options.addOption("c", "cellLength", true, "Cell length");
         options.addOption("o", "outfile", true, "Output file to write nodes to");
-        options.addOption("i","infile", true, "Input file to read segments from");
+        options.addOption("i", "infile", true, "Input file to read segments from");
         return options;
     }
 
@@ -30,35 +30,32 @@ public class CommandParser {
         Options options = createOptions();
         CommandLineParser parser = new DefaultParser();
 
-        try{
+        try {
             CommandLine cmd = parser.parse(options, args);
 
-            if(cmd.hasOption("h")) printHelp(options);
+            if (cmd.hasOption("h")) printHelp(options);
 
-            if(cmd.hasOption("c")) {
+            if (cmd.hasOption("c")) {
                 cellLength = Double.parseDouble(cmd.getOptionValue("c"));
-            }
-            else {
+            } else {
                 System.out.println("You must specify cell length value");
                 printHelp(options);
             }
 
             if (cmd.hasOption("i")) {
                 inFilename = cmd.getOptionValue("i");
-            }
-            else {
+            } else {
                 System.out.println("You must specify an input file");
                 printHelp(options);
             }
 
             if (cmd.hasOption("o")) {
                 outFilename = cmd.getOptionValue("o");
-            }
-            else {
+            } else {
                 outFilename = "nodes.xyz";
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Invalid command format");
             printHelp(options);
         }

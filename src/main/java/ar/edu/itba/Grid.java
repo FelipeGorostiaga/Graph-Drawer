@@ -3,8 +3,8 @@ package ar.edu.itba;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-import static ar.edu.itba.App.segments;
 
+import static ar.edu.itba.App.segments;
 
 
 public class Grid {
@@ -18,8 +18,8 @@ public class Grid {
     public Grid(double width, double height, double size) {
 
         points = new LinkedList<>();
-        for(double x = size; x < width; x += size){
-            for(double y = size; y < height; y += size ){
+        for (double x = size; x < width; x += size) {
+            for (double y = size; y < height; y += size) {
                 Vector<Double> point = new Vector<>(2);
                 point.add(x);
                 point.add(y);
@@ -34,7 +34,7 @@ public class Grid {
 
     public static boolean areReachableNodes(Node node, Node other) {
         Wall nodeWall = new Wall(node.getX(), node.getY(), other.getX(), other.getY());
-        for (Wall wall: segments) {
+        for (Wall wall : segments) {
             if (wall.intersect(nodeWall)) {
                 return false;
             }
@@ -43,17 +43,17 @@ public class Grid {
     }
 
     public static double distance(Node n1, Node n2) {
-        return Math.sqrt(Math.pow(n1.getX()-n2.getX(),2)+Math.pow(n1.getY()-n2.getY(),2));
+        return Math.sqrt(Math.pow(n1.getX() - n2.getX(), 2) + Math.pow(n1.getY() - n2.getY(), 2));
     }
 
 
-    public void removePointsInside(final List<Obstacle> obstacles){
+    public void removePointsInside(final List<Obstacle> obstacles) {
 
         List<Vector<Double>> aux = new LinkedList<>();
-        for (Obstacle obstacle: obstacles){
+        for (Obstacle obstacle : obstacles) {
             boolean isInside = false;
-            for (Vector<Double> point: points){
-                if(obstacle.isInside(point, width)){
+            for (Vector<Double> point : points) {
+                if (obstacle.isInside(point, width)) {
                     aux.add(point);
                 }
             }

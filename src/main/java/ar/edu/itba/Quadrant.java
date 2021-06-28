@@ -2,7 +2,6 @@ package ar.edu.itba;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 public class Quadrant {
 
@@ -17,21 +16,22 @@ public class Quadrant {
         this.xMax = xMax;
         this.yMin = yMin;
         this.yMax = yMax;
-        int xSteps = (int) Math.floor((xMax-xMin) / ind);
-        int ySteps = (int) Math.floor((yMax-yMin) / ind);
+        int xSteps = (int) Math.floor((xMax - xMin) / ind);
+        int ySteps = (int) Math.floor((yMax - yMin) / ind);
         xSteps += xSteps == 0 ? 1 : 0;
         ySteps += ySteps == 0 ? 1 : 0;
-        double xStep = (xMax-xMin)/ xSteps;
-        double yStep = (yMax-yMin)/ySteps;
+        double xStep = (xMax - xMin) / xSteps;
+        double yStep = (yMax - yMin) / ySteps;
+
         for (double x = xMin; x < xMax; x += xStep)
-            for (double y =yMin; y <yMax; y += yStep)
-                if (x+xStep/2 < xMax && y + yStep/2 < yMax)
-                    nodes.add(new Node(x + xStep/2, y + yStep/2));
-        // This is inefficient
+            for (double y = yMin; y < yMax; y += yStep)
+                if (x + xStep / 2 < xMax && y + yStep / 2 < yMax)
+                    nodes.add(new Node(x + xStep / 2, y + yStep / 2));
+
         for (Node n : nodes) {
             for (Node n2 : nodes) {
                 // Sufficient condition
-                if (n != n2 && !n.getNeighbours().contains(n2) && Grid.areReachableNodes(n, n2)){
+                if (n != n2 && !n.getNeighbours().contains(n2) && Grid.areReachableNodes(n, n2)) {
                     n.addNeighbour(n2);
                     n2.addNeighbour(n);
                 }

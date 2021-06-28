@@ -29,11 +29,11 @@ public class App {
 
     private static int calculateScaleFactor(Vector<Double> dimensions) {
 
-        double maxDim = Math.max(dimensions.get(0), dimensions.get(1));
+/*        double maxDim = Math.max(dimensions.get(0), dimensions.get(1));
 
         if (maxDim <= 10) return 100;
-        if (maxDim <= 100) return 10;
-        return 1;
+        if (maxDim <= 100) return 10;*/
+        return 20;
     }
 
 }

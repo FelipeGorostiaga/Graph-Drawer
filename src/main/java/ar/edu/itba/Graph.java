@@ -10,6 +10,8 @@ public class Graph {
 
     public static List<Node> nodes;
 
+    public static List<Quadrant> quadrants;
+
     public Graph() {
         nodes = new LinkedList<>();
     }
@@ -71,13 +73,10 @@ public class Graph {
         Set<Node> visited;
         List<Node> path = null;
 
-        while (removed) {
+        for (int i = 0; i < 10000; i++) {
 
             for (Node node : nodes) {
-
                 visited = new HashSet<>();
-
-
                 visited.add(node);
 
                 path = getRedundantPath(node, visited);
@@ -87,8 +86,6 @@ public class Graph {
                     removed = true;
                     break;
                 }
-
-
             }
 
             if (path == null) {
@@ -115,23 +112,28 @@ public class Graph {
     private static List<Node> getRedundantPath(Node node1, Set<Node> visited) {
 
         List<Node> redundantPath = new LinkedList<>();
+
         // Go to neighbour
         for (Node node2 : node1.getNeighbours()) {
+
             if (node2.getNeighbours().size() == 2) {
+
                 // 2-jump neighbour
                 for (Node node3 : node2.getNeighbours()) {
+
                     // prevent cycle 1 <--> 2 <--> 1
                     if (!node3.equals(node1)) {
 
-                        //if (!visited.contains(node3)) {
-                        visited.add(node3);
-                        if (Grid.areReachableNodes(node1, node3)) {
-                            redundantPath.add(node1);
-                            redundantPath.add(node2);
-                            redundantPath.add(node3);
-                            return redundantPath;
+                        if (!visited.contains(node3)) {
+                            visited.add(node3);
+
+                            if (Grid.areReachableNodes(node1, node3)) {
+                                redundantPath.add(node1);
+                                redundantPath.add(node2);
+                                redundantPath.add(node3);
+                                return redundantPath;
+                            }
                         }
-                        //}
                     }
                 }
             }
@@ -155,24 +157,28 @@ public class Graph {
     }
 
     private static List<Quadrant> getQuadrants() {
+
         List<Double> yLimits = segments.stream()
                 .map(wall -> wall.getP1().get(1))
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
+
         List<Quadrant> quads = new ArrayList<>();
         for (int i = 0; i < yLimits.size() - 1; i++) {
             double yMin = yLimits.get(i);
             double yMax = yLimits.get(i + 1);
             List<Double> xLimits = new ArrayList<>();
 
-            for (Wall w : segments.stream()
+            List<Wall> auxWalls = segments.stream()
                     .filter(wall -> (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) <= 0
                             && Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMax) >= 0)
                             || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)
                             || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMax) == 0)
                             || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMax) == 0)
-                            || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)).collect(Collectors.toList())) {
+                            || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)).collect(Collectors.toList());
+
+            for (Wall w : auxWalls) {
                 if (!xLimits.contains(w.getP1().get(0)))
                     xLimits.add(w.getP1().get(0));
                 if (!xLimits.contains(w.getP2().get(0)))
@@ -193,7 +199,8 @@ public class Graph {
         while (!quads.isEmpty()) {
             Markable<Quadrant> curr = quads.removeFirst();
             quads.stream()
-                    .filter(x -> curr.getEntity().neighbours(x.getEntity()) /*&& !x.isMarked()*/)
+                    // solo los vecinos del nodo
+                    .filter(x -> curr.getEntity().neighbours(x.getEntity()))
                     .forEach(x -> {
                         double minDist = Double.POSITIVE_INFINITY;
                         Node bestCurrNode = null, bestXNode = null;
@@ -219,12 +226,11 @@ public class Graph {
         }
     }
 
-    private static void removeRedundantEdges (List<Node> nodes) {
-        for(Node node : nodes) {
+    private static void removeRedundantEdges(List<Node> nodes) {
+        for (Node node : nodes) {
             if (node.getNeighbours().size() > 4) {
-                // boolean removeNeighs = false;
                 for (Node neigh : node.getNeighbours()) {
-                    if(!neigh.getNeighbours().contains(node))
+                    if (!neigh.getNeighbours().contains(node))
                         continue;
                     Set<Node> intersection = new HashSet<>(node.getNeighbours());
                     intersection.retainAll(neigh.getNeighbours());
@@ -235,24 +241,27 @@ public class Graph {
                             sharedNeigh.removeNeighbour(node);
                     }
                 }
-                node.getNeighbours().removeAll(node.getNeighbours().stream().filter(n->!n.getNeighbours().contains(node)).collect(Collectors.toList()));
+                node.getNeighbours().removeAll(
+                        node.getNeighbours().stream()
+                                .filter(n -> !n.getNeighbours().contains(node)).collect(Collectors.toList()));
             }
         }
     }
 
     public void generateGraph() {
-        List<Quadrant> quadrants = getQuadrants();
-        System.out.println("Quadrants:" + quadrants.size());
+
+        // Generate quadrants
+        quadrants = getQuadrants();
+
+        // Join nodes from different quadrants
         joinNodes(quadrants);
         quadrants.forEach(x -> nodes.addAll(x.getNodes()));
-        int i = 0;
-        for (Node n : nodes) {
-            n.setId(i++);
-        }
+
+        addIdToNodes();
+
         removeRedundantEdges(nodes);
-        List<Node> nodesWNoNeighs = nodes.stream().filter(n->n.getNeighbours().size() == 0).collect(Collectors.toList());
+        List<Node> nodesWNoNeighs = nodes.stream().filter(n -> n.getNeighbours().size() == 0).collect(Collectors.toList());
         nodes.removeAll(nodesWNoNeighs);
-        //trimRedundantNodes();
     }
 
     private static class Markable<T> {
