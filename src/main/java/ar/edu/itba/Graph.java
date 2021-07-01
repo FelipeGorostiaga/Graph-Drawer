@@ -12,10 +12,12 @@ public class Graph {
 
     public static List<Quadrant> quadrants;
 
+    private static final int MAX_NEIGHBOURS = 4;
+
     public Graph() {
         nodes = new LinkedList<>();
     }
-
+    
     public void gridToGraph(Grid grid, double size, List<Obstacle> obstacles) {
 
         List<Vector<Double>> points = grid.getPoints();
@@ -165,12 +167,13 @@ public class Graph {
                 .collect(Collectors.toList());
 
         List<Quadrant> quads = new ArrayList<>();
+
         for (int i = 0; i < yLimits.size() - 1; i++) {
             double yMin = yLimits.get(i);
             double yMax = yLimits.get(i + 1);
             List<Double> xLimits = new ArrayList<>();
 
-            List<Wall> auxWalls = segments.stream()
+            List<Wall> tempWalls = segments.stream()
                     .filter(wall -> (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) <= 0
                             && Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMax) >= 0)
                             || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)
@@ -178,7 +181,7 @@ public class Graph {
                             || (Double.compare(Math.min(wall.getP1().get(1), wall.getP2().get(1)), yMax) == 0)
                             || (Double.compare(Math.max(wall.getP1().get(1), wall.getP2().get(1)), yMin) == 0)).collect(Collectors.toList());
 
-            for (Wall w : auxWalls) {
+            for (Wall w : tempWalls) {
                 if (!xLimits.contains(w.getP1().get(0)))
                     xLimits.add(w.getP1().get(0));
                 if (!xLimits.contains(w.getP2().get(0)))
@@ -192,6 +195,7 @@ public class Graph {
         return quads;
     }
 
+    // Se unen todos los nodos dentro de cada cuadrante, resultando en un grafo conexo por cuadrante
     private static void joinNodes(List<Quadrant> quadrants) {
         LinkedList<Markable<Quadrant>> quads = new LinkedList<>();
         quads.addAll(quadrants.stream().map(Markable::new).collect(Collectors.toList()));
@@ -203,22 +207,22 @@ public class Graph {
                     .filter(x -> curr.getEntity().neighbours(x.getEntity()))
                     .forEach(x -> {
                         double minDist = Double.POSITIVE_INFINITY;
-                        Node bestCurrNode = null, bestXNode = null;
+                        Node bNode = null, otherNode = null;
                         for (Node currNode : curr.getEntity().getNodes()) {
                             for (Node xNode : x.getEntity().getNodes()) {
                                 if (Grid.areReachableNodes(currNode, xNode)
                                         && Grid.distance(currNode, xNode) < minDist) {
                                     minDist = Grid.distance(currNode, xNode);
-                                    bestCurrNode = currNode;
-                                    bestXNode = xNode;
+                                    bNode = currNode;
+                                    otherNode = xNode;
                                 }
                             }
                         }
-                        if (bestCurrNode != null && bestXNode != null) {
-                            if (!bestCurrNode.getNeighbours().contains(bestXNode))
-                                bestCurrNode.addNeighbour(bestXNode);
-                            if (!bestXNode.getNeighbours().contains(bestCurrNode))
-                                bestXNode.addNeighbour(bestCurrNode);
+                        if (bNode != null && otherNode != null) {
+                            if (!bNode.getNeighbours().contains(otherNode))
+                                bNode.addNeighbour(otherNode);
+                            if (!otherNode.getNeighbours().contains(bNode))
+                                otherNode.addNeighbour(bNode);
                         }
                         x.setMarked(true);
                     });
@@ -228,7 +232,7 @@ public class Graph {
 
     private static void removeRedundantEdges(List<Node> nodes) {
         for (Node node : nodes) {
-            if (node.getNeighbours().size() > 4) {
+            if (node.getNeighbours().size() > MAX_NEIGHBOURS) {
                 for (Node neigh : node.getNeighbours()) {
                     if (!neigh.getNeighbours().contains(node))
                         continue;
@@ -248,22 +252,21 @@ public class Graph {
         }
     }
 
+    // Genera un grafo de cantidad minimal de nodos
     public void generateGraph() {
-
         // Generate quadrants
         quadrants = getQuadrants();
-
         // Join nodes from different quadrants
         joinNodes(quadrants);
         quadrants.forEach(x -> nodes.addAll(x.getNodes()));
-
         addIdToNodes();
-
         removeRedundantEdges(nodes);
-        List<Node> nodesWNoNeighs = nodes.stream().filter(n -> n.getNeighbours().size() == 0).collect(Collectors.toList());
-        nodes.removeAll(nodesWNoNeighs);
+        // Eliminate nodes that have no neighbours
+        List<Node> emptyNodes = nodes.stream().filter(n -> n.getNeighbours().size() == 0).collect(Collectors.toList());
+        nodes.removeAll(emptyNodes);
     }
 
+    // Clase helper para poder saber que cuadrantes ya fueron transitados
     private static class Markable<T> {
         private boolean marked = false;
         private T entity;
